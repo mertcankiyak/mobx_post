@@ -1,28 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:mobx_post/product/enums/preferences_key.dart';
+import 'package:mobx_post/product/enums/hive_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class CacheManager {
   static final CacheManager _instance = CacheManager._init();
 
-  SharedPreferences? _preferences;
   static CacheManager get instance => _instance;
+  Box<dynamic>? _myBox;
 
   CacheManager._init() {
-    SharedPreferences.getInstance().then((value) {
-      _preferences = value;
+    Hive.openBox(BoxKeys.userInfoBox.toString()).then((value) {
+      _myBox = value;
     });
   }
 
   static Future prefrencesInit() async {
-    instance._preferences ??= await SharedPreferences.getInstance();
+    await Hive.initFlutter();
+    instance._myBox = await Hive.openBox("testBox");
   }
 
   Future<void> setStringValue(
-      {required PreferencesKey key, required String value}) async {
-    await _preferences!.setString(key.toString(), value);
+      {required HiveKeys key, required String value}) async {
+    await _myBox?.put(key.toString(), value);
   }
 
-  String getStringValue({required PreferencesKey key}) =>
-      _preferences?.getString(key.toString()) ?? '';
+  String getStringValue({required HiveKeys key}) {
+    String value = _myBox?.get(key.toString()) ?? "";
+    return value;
+  }
 }

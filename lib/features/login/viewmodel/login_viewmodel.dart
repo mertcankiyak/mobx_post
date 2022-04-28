@@ -3,7 +3,7 @@ import 'package:mobx/mobx.dart';
 import 'package:mobx_post/cache/cache_manager.dart';
 import 'package:mobx_post/features/login/model/request_model.dart';
 import 'package:mobx_post/features/login/service/Login_service.dart';
-import 'package:mobx_post/product/enums/preferences_key.dart';
+import 'package:mobx_post/product/enums/hive_keys.dart';
 import 'package:mobx_post/product/enums/state_enum.dart';
 part 'login_viewmodel.g.dart';
 
@@ -33,10 +33,10 @@ abstract class _LoginViewModelBase with Store {
     changeLoadingStatus();
     final data = await loginService.login(requestModel: requestUserModel);
     await cacheManager.setStringValue(
-        key: PreferencesKey.token, value: data?.token ?? "");
+        key: HiveKeys.token, value: data?.token ?? "");
     changeLoadingStatus();
     if (data != null) {
-      String getToken = cacheManager.getStringValue(key: PreferencesKey.token);
+      String getToken = cacheManager.getStringValue(key: HiveKeys.token);
       token = getToken;
       debugPrint("login Token: " + getToken);
       state = LoginState.LoginSuccess;
@@ -48,7 +48,7 @@ abstract class _LoginViewModelBase with Store {
 
   void currentUser() {
     changeLoadingStatus();
-    String getToken = cacheManager.getStringValue(key: PreferencesKey.token);
+    String getToken = cacheManager.getStringValue(key: HiveKeys.token);
     changeLoadingStatus();
     if (getToken != "") {
       state = LoginState.LoginCache;
@@ -76,7 +76,7 @@ abstract class _LoginViewModelBase with Store {
   @action
   Future<void> logOut() async {
     changeLoadingStatus();
-    await cacheManager.setStringValue(key: PreferencesKey.token, value: "");
+    await cacheManager.setStringValue(key: HiveKeys.token, value: "");
     changeLoadingStatus();
     state = LoginState.LoginInitial;
   }

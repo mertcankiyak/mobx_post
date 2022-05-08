@@ -38,7 +38,6 @@ abstract class _LoginViewModelBase with Store {
     if (data != null) {
       String getToken = cacheManager.getStringValue(key: HiveKeys.token);
       token = getToken;
-      debugPrint("login Token: " + getToken);
       state = LoginState.LoginSuccess;
     } else {
       error = "Giriş Hatası.";
@@ -50,7 +49,7 @@ abstract class _LoginViewModelBase with Store {
     changeLoadingStatus();
     String getToken = cacheManager.getStringValue(key: HiveKeys.token);
     changeLoadingStatus();
-    if (getToken != "") {
+    if (getToken.isNotEmpty) {
       state = LoginState.LoginCache;
       token = getToken;
     } else {
@@ -76,7 +75,7 @@ abstract class _LoginViewModelBase with Store {
   @action
   Future<void> logOut() async {
     changeLoadingStatus();
-    await cacheManager.setStringValue(key: HiveKeys.token, value: "");
+    await cacheManager.setStringValue(key: HiveKeys.token, value: null);
     changeLoadingStatus();
     state = LoginState.LoginInitial;
   }

@@ -21,7 +21,7 @@ class CacheManager {
   }
 
   Future<void> setStringValue(
-      {required HiveKeys key, required String value}) async {
+      {required HiveKeys key, required dynamic value}) async {
     await _myBox?.put(key.toString(), value);
   }
 
